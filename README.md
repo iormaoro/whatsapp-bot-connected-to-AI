@@ -26,7 +26,7 @@
 * All features from [Whatsapp-web.js](https://github.com/pedroslopez/whatsapp-web.js/#supported-features)
 * Translate any language to any language
 * Make Whatsapp stickers within chat
-* [Openai](openai.com) chat and Image generation
+* [Openai](https://openai.com/) chat and Image generation
 
 ## Installation
 
