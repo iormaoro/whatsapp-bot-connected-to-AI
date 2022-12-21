@@ -65,14 +65,9 @@
       and
       
        sudo apt update && sudo apt install -y gconf-service libgbm-dev libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget
- 
- 
-3. After running above commands you have to edit one line in whatsapp-web.js. To do that in your file directory go to "node_modules/whatsapp-web.js/src/structures/Message.js" and change 309th line to 
-        
-       const quotedMsg = window.Store.QuotedMsg.getQuotedMsgObj(msg);
 
 
-4. Also to make stickers need ffmpeg. 
+3. Also to make stickers need ffmpeg. 
 
     If you are a windows user download it from [here](https://www.gyan.dev/ffmpeg/builds/) and extract ffmpeg.exe to folder that created (wabot)
     
@@ -81,10 +76,10 @@
        sudo apt install ffmpeg
     
 
-5. Then download [index.js](https://github.com/ravishkaw12/whatsapp-bot-connected-to-AI/blob/main/index.js) and move it to folder/directory
+4. Then download [index.js](https://github.com/ravishkaw12/whatsapp-bot-connected-to-AI/blob/main/index.js) and move it to folder/directory
 
 
-6. To use openai features you have to get api key. You can get api key from [here](https://beta.openai.com/account/api-keys). Then add your api key to index.js (line 244 and 276)
+5. To use openai features you have to get api key. You can get api key from [here](https://beta.openai.com/account/api-keys). Then add your api key to index.js (line 244 and 276)
 
 
 
