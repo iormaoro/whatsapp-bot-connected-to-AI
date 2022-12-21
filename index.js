@@ -1,4 +1,4 @@
-//This code created by https://github.com/ravishkaw12 getting help from whatsapp-web.js and commit changes as your needs
+//This code created by https://github.com/ravishkaw getting help from whatsapp-web.js and commit changes as your needs
 
 const { Configuration, OpenAIApi } = require("openai");
 const qrcode = require("qrcode-terminal");
