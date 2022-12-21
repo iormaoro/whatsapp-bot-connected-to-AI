@@ -69,7 +69,7 @@
  
 3. After running above commands you have to edit one line in whatsapp-web.js. To do that in your file directory go to "node_modules/whatsapp-web.js/src/structures/Message.js" and change 309th line to 
         
-       return msg.getRawQuotedMsgObj().serialize();
+       const quotedMsg = window.Store.QuotedMsg.getQuotedMsgObj(msg);
 
 
 4. Also to make stickers need ffmpeg. 
