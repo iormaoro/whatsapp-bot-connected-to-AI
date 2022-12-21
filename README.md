@@ -3,6 +3,9 @@
 " NOTE: I can't guarantee you will not be blocked by using this method, although it has worked for me. WhatsApp does not allow bots or unofficial clients on their platform, so this shouldn't be considered totally safe "
 
 
+**Also in this repo those node_modules and ffmpeg just demo how folder looks like.**
+
+
 ## Used other repositories 
 
 * Whatsapp-web.js
