@@ -1,7 +1,9 @@
 # Whatsapp-bot-connected-to-AI
 
+" NOTE: I can't guarantee you will not be blocked by using this method, although it has worked for me. WhatsApp does not allow bots or unofficial clients on their platform, so this shouldn't be considered totally safe "
 
-## Used other repositories
+
+## Used other repositories 
 
 * Whatsapp-web.js
 
@@ -77,6 +79,6 @@
 
 After following all installation guides change [index.js](https://github.com/ravishkaw12/whatsapp-bot-connected-to-AI/blob/main/index.js) as your need. Also refer [Guides](https://wwebjs.dev/guide/) and [Documentation](https://docs.wwebjs.dev/) from whatsapp-web.js.
 
-Then run node index.js
+Then run node index.js in terminal. Scan qr and link your device.
 
-And that's all.
+And that's all. Use your whatsapp bot
