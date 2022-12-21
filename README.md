@@ -39,6 +39,8 @@
 
 2. Open terminal in that folder/directory and run these commands
 
+      `npm init -y`
+
       `npm i whatsapp-web.js`
       
       `npm i qrcode-terminal`
