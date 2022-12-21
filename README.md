@@ -73,7 +73,7 @@
 5. Then download [index.js](https://github.com/ravishkaw12/whatsapp-bot-connected-to-AI/blob/main/index.js) and move it to folder/directory
 
 
-6. To use openai features you have to get api key. You can get api key from [here](https://beta.openai.com/account/api-keys). Then add your api key to index.js (line 241 and 273)
+6. To use openai features you have to get api key. You can get api key from [here](https://beta.openai.com/account/api-keys). Then add your api key to index.js (line 244 and 276)
 
 
 
