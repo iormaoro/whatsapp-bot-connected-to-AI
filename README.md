@@ -53,23 +53,32 @@
       
      Also buttons and lists to get work you have to run this
       
-      `npm i git+https://github.com/pedroslopez/whatsapp-web.js#fix-buttons-list`
+       npm i git+https://github.com/pedroslopez/whatsapp-web.js#fix-buttons-list
+      
+      if above code didn't get worked buttons or lists try this
+      
+       npm i github:pedroslopez/whatsapp-web.js#fix-buttons-list
       
      Also if you are running on Linux server you must use following two commands
       
-      `sudo npm install -g puppeteer --unsafe-perm=true -allow-root && sudo apt install chromium-browser -y`
+       sudo npm install -g puppeteer --unsafe-perm=true -allow-root && sudo apt install chromium-browser -y
+      and
       
-      `sudo apt update && sudo apt install -y gconf-service libgbm-dev libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget` 
+       sudo apt update && sudo apt install -y gconf-service libgbm-dev libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget
  
  
-3. After running above commands you have to edit one line in whatsapp-web.js. To do that in your file directory go to "node_modules/whatsapp-web.js/src/structures/Message.js" and change 309th line to `return msg.getRawQuotedMsgObj().serialize();`
+3. After running above commands you have to edit one line in whatsapp-web.js. To do that in your file directory go to "node_modules/whatsapp-web.js/src/structures/Message.js" and change 309th line to 
+        
+       return msg.getRawQuotedMsgObj().serialize();
 
 
 4. Also to make stickers need ffmpeg. 
 
     If you are a windows user download it from [here](https://www.gyan.dev/ffmpeg/builds/) and extract ffmpeg.exe to folder that created (wabot)
     
-    If you are a linux user run this command `sudo apt install ffmpeg`
+    If you are a linux user run this command 
+    
+       sudo apt install ffmpeg
     
 
 5. Then download [index.js](https://github.com/ravishkaw12/whatsapp-bot-connected-to-AI/blob/main/index.js) and move it to folder/directory
