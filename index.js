@@ -1,3 +1,5 @@
+//This code created by https://github.com/ravishkaw12 getting help from whatsapp-web.js and commit changes as your needs
+
 const { Configuration, OpenAIApi } = require("openai");
 const qrcode = require("qrcode-terminal");
 const mime = require("mime-types");
@@ -14,7 +16,7 @@ const {
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: { args: ["--no-sandbox", "--disable-setuid-sandbox"] },
-  ffmpeg: "/usr/bin/ffmpeg", //This is ffmpeg path
+  ffmpeg: "/usr/bin/ffmpeg", //This is linux default ffmpeg path || inn winodws after extracting ffmpeg.exe to this path change this to ./ffmpeg
 });
 
 client.on("qr", (qr) => {
@@ -207,12 +209,13 @@ client.on("message", async (msg) => {
           }
           let quotedMsg = await msg.getQuotedMessage();
 
-          //mentioning options
+          //send quoted msg with mentioning
           if (quotedMsg) {
             msg.react("🔖");
             await chat.sendMessage(quotedMsg.body, { mentions });
             break;
           } else {
+            //send a msg with mentioning
             msg.react("🏷️");
             await chat.sendMessage("An admin mentioned all members", {
               mentions,
