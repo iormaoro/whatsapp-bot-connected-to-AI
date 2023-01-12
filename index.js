@@ -1,4 +1,6 @@
-//This code created by https://github.com/ravishkaw getting help from whatsapp-web.js and commit changes as your needs
+//reffer wwebjs documentation and do changes as you want.
+//also reffer docummentation https://beta.openai.com/docs/api-reference/completions
+//and get api key from https://beta.openai.com/account/api-keys and save it into your system as OPENAI_API_KEY as a environment variable (windows only). in linux paste it directly here
 
 const { Configuration, OpenAIApi } = require("openai");
 const qrcode = require("qrcode-terminal");
@@ -16,7 +18,7 @@ const {
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: { args: ["--no-sandbox", "--disable-setuid-sandbox"] },
-  ffmpeg: "/usr/bin/ffmpeg", //This is linux default ffmpeg path || inn winodws after extracting ffmpeg.exe to this path change this to ./ffmpeg
+  ffmpeg: "/usr/bin/ffmpeg", //This is linux default ffmpeg path || in winodws after extracting ffmpeg.exe to this path change this to ./ffmpeg
 });
 
 client.on("qr", (qr) => {
@@ -52,6 +54,100 @@ client.on("message", async (msg) => {
   chat.sendSeen();
   //console.log("MESSAGE RECEIVED", msg);
 
+  //These two are for get openai responses with quoting previous message from bot. These two can do kinda continuous chat as they reads previous message from bot
+
+  //first one is for private chats and it gets sarcastic replies, using openai marv the sarcastic bot example
+  if (!chat.isGroup) {
+    if (msg.hasQuotedMsg) {
+      if (!msg.body.startsWith("!")) {
+        if (msg.type === "chat") {
+          const quotedMsg = await msg.getQuotedMessage();
+          if (quotedMsg.fromMe) {
+            msg.react("💬");
+            const configuration = new Configuration({
+              apiKey: process.env.OPENAI_API_KEY,
+            });
+            const openai = new OpenAIApi(configuration);
+            try {
+              const completion = await openai.createCompletion({
+                model: "text-davinci-003",
+                //use your bot name here in Botname
+                prompt:
+                  `Botname is a chatbot that reluctantly answers questions with sarcastic responses: \nBotname: ${quotedMsg.body}\n\nYou:` +
+                  msg.body +
+                  `\nBotname:`,
+                temperature: 0.5, //you can change these values reffering api documentation and openai examples
+                max_tokens: 60,
+                top_p: 0.3,
+                frequency_penalty: 0.5,
+                presence_penalty: 0,
+                user: msg.author,
+              });
+              //console.log(completion.data.choices[0].text);
+              setTimeout(() => {
+                msg.react("✅");
+                msg.reply(completion.data.choices[0].text);
+              }, 300);
+            } catch (error) {
+              if (error.response) {
+                console.log(error.response.status);
+                console.log(error.response.data);
+              } else {
+                console.log(error.message);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  //second one is for group chats and it gets helpful replies, using chat example
+  if (chat.isGroup) {
+    if (msg.hasQuotedMsg) {
+      if (!msg.body.startsWith("!")) {
+        if (msg.type === "chat") {
+          const quotedMsg = await msg.getQuotedMessage();
+          if (quotedMsg.fromMe) {
+            msg.react("💬");
+            const configuration = new Configuration({
+              apiKey: process.env.OPENAI_API_KEY,
+            });
+            const openai = new OpenAIApi(configuration);
+            try {
+              const completion = await openai.createCompletion({
+                model: "text-davinci-003",
+                //here also use your bot name
+                prompt:
+                  `The following is a conversation with Botname. Botname is helpful, creative, clever, and very friendly.\nBotname: ${quotedMsg.body}\n\nHuman:` +
+                  msg.body +
+                  `\nBotname:`,
+                temperature: 0.9,
+                max_tokens: 250,
+                top_p: 1,
+                frequency_penalty: 0,
+                presence_penalty: 0.6,
+                stop: [" Human:", " Botname:"],
+                user: msg.author,
+              });
+              //console.log(completion.data.choices[0].text);
+              setTimeout(() => {
+                msg.react("✅");
+                msg.reply(completion.data.choices[0].text);
+              }, 300);
+            } catch (error) {
+              if (error.response) {
+                console.log(error.response.status);
+                console.log(error.response.data);
+              } else {
+                console.log(error.message);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
   //check bot alive
   if (msg.body === "!bot") {
     msg.react("😎");
@@ -62,8 +158,7 @@ client.on("message", async (msg) => {
     let chat = await msg.getChat();
     const media = MessageMedia.fromFilePath("/root/wabot/bibi.png"); //I have sent image with !help command
     chat.sendMessage(media, {
-      caption: `🔰 *Hello I am Bibi the Bot* 🔰
-      _Still in beta_ 👷‍♂️
+      caption: `🔰 *Hello I am Botname the Bot* 🔰
       
         ⬇️Commands⬇️
 
@@ -72,11 +167,33 @@ client.on("message", async (msg) => {
           _!groupinfo_
           _!botinfo_
           _!bot ..._ (start any message with !bot)
+          _!gen ..._ (Dall-E image generation)
+          _!code ..._ (Code check)
           _!traen_ (Translate to English)
           _!trasin_ (Translate to Sinhala)
+          _!chats_ (Chats that opened within bot)
+          _!id_ (Id of a group or chat)
+          _!sendowner ..._ (Send message to owner)
+
+          _Also send any message mentioning my previous message for like AI assistant in groups and Sarcastic replies in private chats_
        `,
     });
   }
+
+  //reply to hi and also !bot, !code !gen commands who use without any text
+  else if (
+    msg.body === "Hi" ||
+    msg.body === "hi" ||
+    msg.body === "!bot" ||
+    msg.body === "!gen" ||
+    msg.body === "!code"
+  ) {
+    setTimeout(() => {
+      msg.react("🙃");
+      msg.reply("Hi there. How can I help you?");
+    }, 400);
+  }
+
   //get bot info
   else if (msg.body === "!botinfo") {
     let info = client.info;
@@ -94,35 +211,93 @@ client.on("message", async (msg) => {
       )
     );
   }
+
+  // Direct send a new message to owner only from private chats
+  else if (msg.body.startsWith("!sendowner ")) {
+    msg.react("🔄️");
+    if (!chat.isGroup) {
+      const contact = await msg.getContact();
+      let message = msg.body.slice(11);
+      let number = `9xxxxxxxxx@c.us`; //owners number
+      setTimeout(() => {
+        msg.react("✅");
+        msg.reply("Done. Sent to owner");
+        client.sendMessage(
+          number,
+          `${contact.pushname} 
+               ${contact.id.user}
+          
+               ${message}`
+        );
+      }, 800);
+    }
+  }
+
+  // Direct send a new message to specific id
+  // This is useful when someone use sendowner command and send owner a message
+  // Use  number and message afer .sendton like .sendton 947xxxxxxxx hello
+  else if (msg.body.startsWith(".sendton ")) {
+    let number = msg.body.split(" ")[1];
+    let messageIndex = msg.body.indexOf(number) + number.length;
+    let message = msg.body.slice(messageIndex, msg.body.length);
+    number = number.includes("@c.us") ? number : `${number}@c.us`;
+    setTimeout(() => {
+      msg.react("✅");
+      client.sendMessage(
+        number,
+        `🔰 *Message from owner* 🔰
+            ⬇️
+            ${message}`
+      );
+    }, 500);
+  }
+
+  // Get how many chats opened in bot
+  else if (msg.body === "!chats") {
+    const chats = await client.getChats();
+    setTimeout(() => {
+      msg.react("✅");
+      client.sendMessage(msg.from, `I have ${chats.length} chats open.`);
+    }, 400);
+  }
+
+  // Get id of a chat
+  else if (msg.body === "!id") {
+    let id = chat.id.user;
+    let number = `947xxxxxxxx@c.us`; //this is owners number and this will send owner the id
+    msg.react("✅");
+    client.sendMessage(number, id);
+    //console.log(id) // can get console also
+  }
+
   //join or leave
-  else if (msg.body === "!leave" && msg.author === "9471xxxxx@c.us") {
-    //This means only owner can remove bot from group
+  else if (msg.body === "!leave") {
+    //Any admin can remove bot from group
     // Leave the group
+    const authorId = msg.author;
     let chat = await msg.getChat();
     if (chat.isGroup) {
-      chat.leave();
+      for (let participant of chat.participants) {
+        if (participant.id._serialized === authorId && participant.isAdmin) {
+          chat.leave();
+        }
+      }
     } else {
-      msg.reply("This command can only be used in a group!");
+      msg.reply("This command can only be used in a group and admins.");
     }
-  } else if (
-    /*This command works only in group as it is checking msg sender. 
-    //if you want to use within private msg just remove msg.author line. But any user who use !join along with link will able
-    to add your bot. */
-
-    //send !join invite link
-    msg.body.startsWith("!join ") &&
-    msg.author === "9471xxxxx@c.us"
-  ) {
+  } else if (msg.body.startsWith("!joinlink ")) {
+    // Send .joinlink group link to join. but use any other as this can be used by anyone
     const inviteLink = msg.body.split(" ")[1];
     inviteCode = inviteLink.replace("https://chat.whatsapp.com/", "");
     try {
       await client.acceptInvite(inviteCode);
       msg.react("✅");
-      msg.reply("Joined the group!");
+      msg.reply("Joined the group.");
     } catch (e) {
       msg.reply("That invite link seems to be invalid.");
     }
   }
+
   //make whatsapp stickers
   //ffmpeg required
   else if (msg.body === "!sticker") {
@@ -154,7 +329,7 @@ client.on("message", async (msg) => {
               {
                 sendMediaAsSticker: true,
                 stickerAuthor: `${contact.pushname}`,
-                stickerName: "Created by Bibi Bot to",
+                stickerName: "Created by Botname Bot to",
               }
             );
             fs.unlinkSync(fullFilename);
@@ -236,33 +411,62 @@ client.on("message", async (msg) => {
     }
   }
   //connected openai - chat
-  //reffer docummentation https://beta.openai.com/docs/api-reference/completions  and change values
   else if (msg.body.startsWith("!bot ")) {
-    msg.react("💬");
-    const configuration = new Configuration({
-      apiKey: (process.env.OPENAI_API_KEY =
-        "get api key from https://beta.openai.com/account/api-keys and paste here"),
-    });
-    const openai = new OpenAIApi(configuration);
-
-    try {
-      const completion = await openai.createCompletion({
-        model: "text-davinci-003",
-        prompt: msg.body.slice(5),
-        temperature: 0.9,
-        max_tokens: 500,
-        top_p: 1,
-        frequency_penalty: 0.5,
-        presence_penalty: 0.6,
+    if (
+      //had use this because sometimes hi hello gets weird replies
+      msg.body.startsWith("!bot Hi ") ||
+      msg.body.startsWith("!bot hi ") ||
+      msg.body.startsWith("!bot Hello ") ||
+      msg.body.startsWith("!bot hello ") ||
+      msg.body.startsWith("!bot Hey ") ||
+      msg.body.startsWith("!bot hey ") ||
+      msg.body === "!bot Hi" ||
+      msg.body === "!bot Hi " ||
+      msg.body === "!bot hi" ||
+      msg.body === "!bot hi " ||
+      msg.body === "!bot Hello" ||
+      msg.body === "!bot Hello " ||
+      msg.body === "!bot hello" ||
+      msg.body === "!bot hello " ||
+      msg.body === "!bot Hey" ||
+      msg.body === "!bot Hey " ||
+      msg.body === "!bot hey" ||
+      msg.body === "!bot hey "
+    ) {
+      setTimeout(() => {
+        msg.react("🙃");
+        msg.reply("Hi there. How can I help you?");
+      }, 400);
+    } else {
+      msg.react("💬");
+      const configuration = new Configuration({
+        apiKey: process.env.OPENAI_API_KEY,
       });
-      //console.log(completion.data.choices[0].text);
-      msg.reply(completion.data.choices[0].text);
-    } catch (error) {
-      if (error.response) {
-        console.log(error.response.status);
-        console.log(error.response.data);
-      } else {
-        console.log(error.message);
+      const openai = new OpenAIApi(configuration);
+
+      try {
+        const completion = await openai.createCompletion({
+          model: "text-davinci-003",
+          prompt: msg.body.slice(4),
+          temperature: 0.9,
+          max_tokens: 1000,
+          top_p: 1,
+          frequency_penalty: 0,
+          presence_penalty: 0.6,
+          user: msg.author,
+        });
+        //console.log(completion.data.choices[0].text);
+        setTimeout(() => {
+          msg.react("✅");
+          msg.reply(completion.data.choices[0].text);
+        }, 300);
+      } catch (error) {
+        if (error.response) {
+          console.log(error.response.status);
+          console.log(error.response.data);
+        } else {
+          console.log(error.message);
+        }
       }
     }
   }
@@ -272,8 +476,7 @@ client.on("message", async (msg) => {
     let chat = await msg.getChat();
     msg.react("💬");
     const configuration = new Configuration({
-      apiKey: (process.env.OPENAI_API_KEY =
-        "get api key from https://beta.openai.com/account/api-keys and paste here"),
+      apiKey: process.env.OPENAI_API_KEY,
     });
     const openai = new OpenAIApi(configuration);
 
@@ -299,23 +502,63 @@ client.on("message", async (msg) => {
     }
   }
 
+  //reffer documentation and change values
+  else if (msg.body.startsWith("!code ")) {
+    msg.react("💬");
+    const configuration = new Configuration({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+    const openai = new OpenAIApi(configuration);
+
+    try {
+      const completion = await openai.createCompletion({
+        model: "code-davinci-002",
+        prompt: msg.body.slice(6),
+        temperature: 0,
+        max_tokens: 256,
+        top_p: 1,
+        frequency_penalty: 0,
+        presence_penalty: 0,
+        user: msg.author,
+      });
+      //console.log(completion.data.choices[0].text);
+      setTimeout(() => {
+        msg.react("✅");
+        msg.reply(completion.data.choices[0].text);
+      }, 300);
+    } catch (error) {
+      if (error.response) {
+        console.log(error.response.status);
+        msg.reply("Invalid request or Limit reached. Try again later....");
+        console.log(error.response.data);
+      } else {
+        console.log(error.message);
+      }
+    }
+  }
+
   //https://cloud.google.com/translate/docs/languages you can get language codes from here
 
   //Translate any language to English
   else if (msg.body.startsWith("!traen ")) {
-    let chat = await msg.getChat();
-    prompt = msg.body.slice(7);
+    msg.react("🔄️");
+    prompt = msg.body.slice(5);
     const res = await translate(`${prompt}`, { to: "en", autoCorrect: true });
-    msg.react("✅");
-    msg.reply(res.text);
+    setTimeout(() => {
+      msg.react("✅");
+      msg.reply(res.text);
+    }, 300);
   }
+
   //Translate any language to Sinhala
   else if (msg.body.startsWith("!trasin ")) {
-    let chat = await msg.getChat();
-    prompt = msg.body.slice(8);
+    msg.react("🔄️");
+    prompt = msg.body.slice(5);
     const res = await translate(`${prompt}`, { to: "si", autoCorrect: true });
-    msg.react("✅");
-    msg.reply(res.text);
+    setTimeout(() => {
+      msg.react("✅");
+      msg.reply(res.text);
+    }, 300);
   }
 
   //These are for Used for exchanging papers in my group . But contains how to send media from URl , Buttons & Lists
