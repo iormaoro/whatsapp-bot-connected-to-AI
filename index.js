@@ -542,7 +542,7 @@ client.on("message", async (msg) => {
   //Translate any language to English
   else if (msg.body.startsWith("!traen ")) {
     msg.react("🔄️");
-    prompt = msg.body.slice(5);
+    prompt = msg.body.slice(7);
     const res = await translate(`${prompt}`, { to: "en", autoCorrect: true });
     setTimeout(() => {
       msg.react("✅");
@@ -553,7 +553,7 @@ client.on("message", async (msg) => {
   //Translate any language to Sinhala
   else if (msg.body.startsWith("!trasin ")) {
     msg.react("🔄️");
-    prompt = msg.body.slice(5);
+    prompt = msg.body.slice(8);
     const res = await translate(`${prompt}`, { to: "si", autoCorrect: true });
     setTimeout(() => {
       msg.react("✅");
